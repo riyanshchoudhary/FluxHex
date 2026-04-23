@@ -27,7 +27,7 @@ const context = canvas.getContext("2d");
 // Configuration
 const frameCount = 96;
 const currentFrame = index => (
-    `frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`
+    `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`
 );
 
 const images = [];

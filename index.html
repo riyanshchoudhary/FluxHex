@@ -3,36 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keyboard Animation</title>
-
-    <!-- CSS -->
+    <title>Velizar Theme - Keyboard Animation</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="/style.css">
-
-    <!-- GSAP + Lenis -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 </head>
 <body>
+
+    <!-- Grainy Noise Overlay -->
+    <div class="noise"></div>
 
     <!-- Canvas -->
     <div class="canvas-container">
         <canvas id="frame-canvas"></canvas>
     </div>
 
-    <!-- Content -->
+    <!-- Bento Labels -->
+    <div class="bento-container">
+        <div class="bento-label" id="bento-1">
+            <span class="label-title">Component 01</span>
+            <span class="label-desc">Optical Glass Elements</span>
+        </div>
+        <div class="bento-label" id="bento-2">
+            <span class="label-title">Component 02</span>
+            <span class="label-desc">Nanometer-Precision Gears</span>
+        </div>
+        <div class="bento-label" id="bento-3">
+            <span class="label-title">Component 03</span>
+            <span class="label-desc">Electromagnetic Shutter</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
     <main class="content">
+        
         <section class="hero panel">
             <h1 class="hero-title">KEYBOARD<br>AESTHETIC</h1>
-            <p>Scroll to interact</p>
+            <p class="hero-subtitle">SCROLL TO INTERACT</p>
         </section>
 
-        <section class="panel">
-            <h2>Animation Section</h2>
+        <section class="about panel">
+            <div class="container">
+                <h2 class="section-title">PRECISION<br>ENGINEERED</h2>
+                <div class="text-block">
+                    <p>Every keystroke is a tactile masterpiece...</p>
+                </div>
+            </div>
         </section>
+
+        <section class="features panel">
+            <div class="container">
+                <h2 class="section-title">THE<br>SPECS</h2>
+                <ul class="feature-list">
+                    <li>01 TACTILE FEEDBACK</li>
+                    <li>02 ALUMINUM CHASSIS</li>
+                    <li>03 HOT-SWAPPABLE</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="outro panel">
+            <h2 class="hero-title">END OF<br>SEQUENCE</h2>
+        </section>
+
     </main>
 
-    <!-- IMPORTANT: JS FILE -->
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Lenis -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <!-- YOUR JS -->
     <script src="/main.js"></script>
 
 </body>

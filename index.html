@@ -1,97 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Velizar Theme - Keyboard Animation</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
+document.addEventListener("DOMContentLoaded", () => {
 
-    <!-- Grainy Noise Overlay -->
-    <div class="noise"></div>
+    // Initialize Lenis
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smooth: true,
+    });
 
-    <!-- Canvas for Scroll Animation -->
-    <div class="canvas-container">
-        <canvas id="frame-canvas"></canvas>
-    </div>
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
 
-    <!-- Technical Info Labels (Bento style) -->
-    <div class="bento-container">
-        <div class="bento-label" id="bento-1">
-            <span class="label-title">Component 01</span>
-            <span class="label-desc">Optical Glass Elements</span>
-        </div>
-        <div class="bento-label" id="bento-2">
-            <span class="label-title">Component 02</span>
-            <span class="label-desc">Nanometer-Precision Gears</span>
-        </div>
-        <div class="bento-label" id="bento-3">
-            <span class="label-title">Component 03</span>
-            <span class="label-desc">Electromagnetic Shutter</span>
-        </div>
-    </div>
+    gsap.registerPlugin(ScrollTrigger);
 
-    <!-- Main Content -->
-    <main class="content">
-        
-        <!-- Hero Section -->
-        <section class="hero panel">
-            <h1 class="hero-title">KEYBOARD<br>AESTHETIC</h1>
-            <p class="hero-subtitle">SCROLL TO INTERACT</p>
-        </section>
+    const canvas = document.getElementById("frame-canvas");
+    const context = canvas.getContext("2d");
 
-        <!-- About Section -->
-        <section class="about panel">
-            <div class="container">
-                <h2 class="section-title">PRECISION<br>ENGINEERED</h2>
-                <div class="text-block">
-                    <p>Every keystroke is a tactile masterpiece. We dive deep into the mechanical aesthetics of modern input devices, capturing the essence of design and functionality.</p>
-                </div>
-            </div>
-        </section>
+    const frameCount = 96;
 
-        <!-- Features Section -->
-        <section class="features panel">
-            <div class="container">
-                <h2 class="section-title">THE<br>SPECS</h2>
-                <ul class="feature-list">
-                    <li>
-                        <span class="feat-number">01</span>
-                        <span class="feat-name">TACTILE FEEDBACK</span>
-                    </li>
-                    <li>
-                        <span class="feat-number">02</span>
-                        <span class="feat-name">ALUMINUM CHASSIS</span>
-                    </li>
-                    <li>
-                        <span class="feat-number">03</span>
-                        <span class="feat-name">HOT-SWAPPABLE</span>
-                    </li>
-                </ul>
-            </div>
-        </section>
+    // ✅ FINAL PATH FIX
+    const currentFrame = index =>
+        `./frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
 
-        <!-- Outro Section -->
-        <section class="outro panel">
-            <h2 class="hero-title">END OF<br>SEQUENCE</h2>
-        </section>
+    const images = [];
+    const imageSeq = { frame: 0 };
 
-    </main>
+    function resize() {
+        const dpr = window.devicePixelRatio || 1;
 
-    <!-- GSAP Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="./main.js"></script>
-</body>
-</html>
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+
+        context.scale(dpr, dpr);
+
+        render();
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Preload
+    for (let i = 0; i < frameCount; i++) {
+        const img = new Image();
+        img.src = currentFrame(i);
+        images.push(img);
+    }
+
+    images[0].onload = render;
+
+    function render() {
+        if (!images[imageSeq.frame]) return;
+
+        const img = images[imageSeq.frame];
+
+        const hRatio = window.innerWidth / img.width;
+        const vRatio = window.innerHeight / img.height;
+        const ratio = Math.max(hRatio, vRatio);
+
+        const centerShift_x = (window.innerWidth - img.width * ratio) / 2;
+        const centerShift_y = (window.innerHeight - img.height * ratio) / 2;
+
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        context.drawImage(
+            img,
+            0, 0, img.width, img.height,
+            centerShift_x, centerShift_y,
+            img.width * ratio, img.height * ratio
+        );
+    }
+
+    gsap.timeline({
+        scrollTrigger: {
+            trigger: ".content",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1,
+        }
+    }).to(imageSeq, {
+        frame: frameCount - 1,
+        snap: "frame",
+        ease: "none",
+        onUpdate: render
+    });
+
+});

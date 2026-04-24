@@ -26,8 +26,10 @@ const context = canvas.getContext("2d");
 
 // Configuration
 const frameCount = 96;
+
+// ✅ FIXED PATH (VERY IMPORTANT)
 const currentFrame = index => (
-    `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`
+    `./frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`
 );
 
 const images = [];
@@ -38,14 +40,18 @@ const imageSeq = {
 // Setup canvas size
 function resize() {
     const dpr = window.devicePixelRatio || 1;
+
+    // 🔥 FIX: reset transform before scaling
+    context.setTransform(1, 0, 0, 1, 0, 0);
+
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
-    
-    // Scale down the canvas element via CSS to match the window size while keeping the high internal resolution
+
     canvas.style.width = `${window.innerWidth}px`;
     canvas.style.height = `${window.innerHeight}px`;
-    
+
     context.scale(dpr, dpr);
+
     render();
 }
 
@@ -62,29 +68,30 @@ for (let i = 0; i < frameCount; i++) {
 // Initial draw once first image loads
 images[0].onload = render;
 
-// Render function: draw image filling the canvas (object-fit: cover equivalent)
+// Render function
 function render() {
-    if(!images[imageSeq.frame]) return;
-    
+    if (!images[imageSeq.frame]) return;
+
     const img = images[imageSeq.frame];
-    const dpr = window.devicePixelRatio || 1;
-    
-    // Calculate aspect ratio against logical window size (since context is scaled)
+
     const hRatio = window.innerWidth / img.width;
     const vRatio = window.innerHeight / img.height;
-    const ratio  = Math.max(hRatio, vRatio);
-    
-    const centerShift_x = (window.innerWidth - img.width*ratio) / 2;
-    const centerShift_y = (window.innerHeight - img.height*ratio) / 2;
-    
-    // Enable high-quality image smoothing
+    const ratio = Math.max(hRatio, vRatio);
+
+    const centerShift_x = (window.innerWidth - img.width * ratio) / 2;
+    const centerShift_y = (window.innerHeight - img.height * ratio) / 2;
+
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
-    
-    // Clear canvas taking into account the logical dimensions
+
     context.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    context.drawImage(img, 0, 0, img.width, img.height,
-                      centerShift_x, centerShift_y, img.width*ratio, img.height*ratio);
+
+    context.drawImage(
+        img,
+        0, 0, img.width, img.height,
+        centerShift_x, centerShift_y,
+        img.width * ratio, img.height * ratio
+    );
 }
 
 // Animation Timeline
@@ -93,7 +100,7 @@ const tl = gsap.timeline({
         trigger: ".content",
         start: "top top",
         end: "bottom bottom",
-        scrub: 1, // Smooth scrubbing
+        scrub: 1,
     }
 });
 
@@ -105,7 +112,6 @@ tl.to(imageSeq, {
 });
 
 // --- Bento Labels Animations ---
-// Using separate ScrollTriggers to precisely control their appearance at specific scroll %
 const labels = [
     { id: '#bento-1', start: '10%', end: '25%' },
     { id: '#bento-2', start: '30%', end: '45%' },
@@ -120,7 +126,6 @@ labels.forEach(label => {
             end: `${label.end} top`,
             scrub: true,
         },
-        // We use keyframes to fade in, hold, and fade out
         keyframes: [
             { opacity: 1, y: 0, duration: 0.2 },
             { opacity: 1, y: 0, duration: 0.6 },
@@ -132,6 +137,7 @@ labels.forEach(label => {
 
 // --- Text Reveal Animations ---
 const titles = gsap.utils.toArray('.hero-title, .section-title');
+
 titles.forEach((title) => {
     gsap.to(title, {
         scrollTrigger: {
@@ -146,6 +152,7 @@ titles.forEach((title) => {
 });
 
 const listItems = gsap.utils.toArray('.feature-list li');
+
 listItems.forEach((item, index) => {
     gsap.to(item, {
         scrollTrigger: {

@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const frameCount = 96;
 
-    // ✅ CORRECT PATH
     const currentFrame = index =>
         `/frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
 
@@ -78,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // scroll animation
+    // FRAME SCROLL ANIMATION
     gsap.timeline({
         scrollTrigger: {
             trigger: ".content",
@@ -91,6 +90,44 @@ document.addEventListener("DOMContentLoaded", () => {
         snap: "frame",
         ease: "none",
         onUpdate: render
+    });
+
+    // 🔥 TEXT REVEAL (THIS WAS MISSING)
+
+    gsap.utils.toArray('.hero-title, .section-title').forEach(el => {
+        gsap.to(el, {
+            scrollTrigger: {
+                trigger: el,
+                start: "top 85%",
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out"
+        });
+    });
+
+    gsap.utils.toArray('.feature-list li').forEach((el, i) => {
+        gsap.to(el, {
+            scrollTrigger: {
+                trigger: el,
+                start: "top 90%",
+            },
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: i * 0.1
+        });
+    });
+
+    gsap.to('.text-block p', {
+        scrollTrigger: {
+            trigger: '.text-block',
+            start: "top 80%",
+        },
+        opacity: 1,
+        y: 0,
+        duration: 1
     });
 
 });
